@@ -4,14 +4,15 @@ FROM python:3.8
 # Set the working directory
 WORKDIR /app
 
-# Copy the application code to the container
-COPY . .
+# Installing necessary dependencies for building the application
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install the required dependencies
-RUN pip install -r requirements.txt
+# Copy the application code to the container as separate layer
+COPY . .
 
 # Expose the application port
 EXPOSE 8000
 
 # Run database migrations and start the Django application
-ENTRYPOINT ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && exec python manage.py runserver 0.0.0.0:8000"]
